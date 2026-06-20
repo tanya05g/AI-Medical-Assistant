@@ -2,6 +2,7 @@ from pathlib import Path
 import sys
 import cv2
 import numpy as np
+from config import UPLOAD_DIR
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 MODEL_DIR = ROOT_DIR / "model"
@@ -9,7 +10,6 @@ sys.path.append(str(MODEL_DIR))
 
 from inference import ensure_model, preprocess_image, predict_image, generate_gradcam  # noqa: E402
 
-UPLOAD_DIR = Path(__file__).resolve().parents[1] / "uploads"
 HEATMAP_DIR = UPLOAD_DIR / "heatmaps"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 HEATMAP_DIR.mkdir(parents=True, exist_ok=True)

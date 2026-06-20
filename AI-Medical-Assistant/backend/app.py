@@ -1,7 +1,7 @@
-from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from config import FRONTEND_ORIGINS, REPORT_DIR, UPLOAD_DIR
 from database.db import Base, engine
 from routes import admin, auth, scans
 
@@ -15,16 +15,15 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=FRONTEND_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-BASE_DIR = Path(__file__).resolve().parent
-(BASE_DIR / "uploads").mkdir(exist_ok=True)
-(BASE_DIR / "reports").mkdir(exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=BASE_DIR / "uploads"), name="uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+REPORT_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 app.include_router(auth.router)
 app.include_router(scans.router)

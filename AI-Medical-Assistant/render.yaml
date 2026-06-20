@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: ai-medical-assistant-api
+    env: python
+    rootDir: AI-Medical-Assistant/backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    plan: starter
+    disk:
+      name: ai-medical-assistant-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: STORAGE_DIR
+        value: /var/data
+      - key: DATABASE_URL
+        value: sqlite:////var/data/medical_assistant.db
+      - key: FRONTEND_ORIGINS
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true

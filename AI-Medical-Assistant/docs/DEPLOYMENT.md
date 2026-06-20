@@ -1,28 +1,59 @@
 # Deployment Guide
 
-## Backend
+## Recommended Hosting
 
-Use a production ASGI server behind a reverse proxy.
+- Backend: Render web service
+- Frontend: Vercel static React app
+- Source: GitHub repository `tanya05g/AI-Medical-Assistant`
+
+This project uses SQLite and uploaded image files, so the backend should run on a service with persistent storage. The included `render.yaml` config uses a persistent disk mounted at `/var/data`.
+
+## Backend on Render
+
+1. Push the latest code to GitHub.
+2. Open Render and create a new Blueprint from the repository.
+3. Select `AI-Medical-Assistant/render.yaml`.
+4. Set `FRONTEND_ORIGINS` after the Vercel frontend URL is available.
+
+Manual Render settings, if you do not use the blueprint:
 
 ```bash
-cd backend
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app:app --host 0.0.0.0 --port 8000
+Root Directory: AI-Medical-Assistant/backend
+Build Command: pip install -r requirements.txt
+Start Command: uvicorn app:app --host 0.0.0.0 --port $PORT
 ```
 
-For production, set a strong JWT secret in `services/security.py` or load it from environment variables.
+Environment variables:
 
-## Frontend
-
-```bash
-cd frontend
-npm install
-npm run build
+```text
+PYTHON_VERSION=3.11.9
+SECRET_KEY=<generate a long random value>
+STORAGE_DIR=/var/data
+DATABASE_URL=sqlite:////var/data/medical_assistant.db
+FRONTEND_ORIGINS=https://your-vercel-app.vercel.app
 ```
 
-Serve `frontend/dist` with Nginx, Caddy, or a static hosting service. Set `VITE_API_URL` during build when the backend is not on `http://127.0.0.1:8000`.
+## Frontend on Vercel
+
+1. Import the GitHub repository into Vercel.
+2. Set the root directory to `AI-Medical-Assistant/frontend`.
+3. Use these build settings:
+
+```text
+Framework Preset: Vite
+Build Command: npm run build
+Output Directory: dist
+Install Command: npm install
+```
+
+4. Add this environment variable:
+
+```text
+VITE_API_URL=https://your-render-backend.onrender.com
+```
+
+5. Deploy.
+6. Copy the Vercel URL and update Render's `FRONTEND_ORIGINS` with that URL.
 
 ## Model
 

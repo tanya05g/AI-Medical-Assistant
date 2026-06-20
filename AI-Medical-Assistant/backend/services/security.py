@@ -4,10 +4,10 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
+from config import SECRET_KEY
 from database.db import get_db
 from models.entities import User
 
-SECRET_KEY = "change-this-secret-for-production"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 12
 
